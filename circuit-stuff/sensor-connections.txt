@@ -1,0 +1,28 @@
+all dI/O pins to arduino nano 33 ble sense
+3.3V LOGIC!!!!
+
+
+RFM9x lora radio:
+Vin-3.3V
+GND-GND
+SCLK-d13
+MISO-d12
+MOSI-d11
+CS-d4
+RST-d5
+G0(IRQ)-d9[INT4]
+
+GPS module:
+Vin-3.3V
+GND-GND
+VBAT-
+RX-d2
+TX-d3
+
+BME680:
+CS-
+VCC-3.3V
+SDI-A4(SDA)
+SCK-A5(SCL)
+GND-GND
+SDO-
