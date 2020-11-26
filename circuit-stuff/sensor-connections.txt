@@ -1,16 +1,12 @@
 all dI/O pins to arduino nano 33 ble sense
 3.3V LOGIC!!!!
 
-
-RFM9x lora radio:
-Vin-3.3V
+HC-12:
 GND-GND
-SCLK-d13
-MISO-d12
-MOSI-d11
-CS-d4
-RST-d5
-G0(IRQ)-d9[INT4]
+Vin-3.3V
+RX-d4
+TX-d5
+
 
 GPS module:
 Vin-3.3V
