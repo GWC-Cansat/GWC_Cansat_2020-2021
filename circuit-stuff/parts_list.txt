@@ -1,0 +1,7 @@
+-Arduino Nano 33 BLE Sense
+-HC-12
+-Adafruit Ultimate GPS Breakout V3
+-BME680
+-3.3v regulator:
+https://www.amazon.co.uk/LDO-3-3V-TO220-BA33BC0T-ROHM/dp/B00AZVDN4Y/ref=sr_1_1?dchild=1&keywords=BA33BC0T&qid=1606422301&sr=8-1
+-10uf capacitor (get from tech)
