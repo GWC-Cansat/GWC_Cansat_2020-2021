@@ -5,7 +5,6 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <Serial.h>
-#include <RH_RF95.h>
 
 #include <stdio.h>
 
@@ -20,10 +19,9 @@
 UART mySerial(digitalPinToPinName(2), digitalPinToPinName(3), NC, NC);
 Adafruit_GPS GPS(&mySerial);
 
-#define RFM95_RST 5
+//HC12 radio module [TX:5 RX:4]
+UART HC12(digitalPinToPinName(4), digitalPinToPinName(5), NC, NC);
 
-// RFM9X radio
-RH_RF95 rf95(4, 9);
 
 // Set GPSECHO to 'false' to turn off echoing the GPS data to the Serial console
 // Set to 'true' if you want to debug and listen to the raw GPS sentences
@@ -34,29 +32,9 @@ int timeToWait;
 
 void setup() {
   Serial.begin(115200);
+  HC12.begin(9600);
+  
   while (!Serial);
-
-  pinMode(RFM95_RST, OUTPUT);
-  digitalWrite(RFM95_RST, LOW);
-  delay(10);
-  digitalWrite(RFM95_RST, HIGH);
-  delay(10);
-
-  if (!rf95.init()){
-    Serial.println("init failed");
-    while(1){}
-  }
-  // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
-
-  // The default transmitter power is 13dBm, using PA_BOOST.
-  // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
-  // you can set transmitter powers from 5 to 23 dBm:
-  //  driver.setTxPower(23, false);
-  // If you are using Modtronix inAir4 or inAir9,or any other module which uses the
-  // transmitter RFO pins and not the PA_BOOST pins
-  // then you can configure the power transmitter power for -1 to 14 dBm and with useRFO true.
-  // Failure to do that will result in extremely low transmit powers.
-  //  driver.setTxPower(14, true);
 
   // Start the pressure sensor
   if (!BARO.begin()) {
@@ -149,9 +127,11 @@ void loop() {
 
   for (int x = 0; x < 12; x++) {
     Serial.print(buf[x]);
+    HC12.print(buf[x]);
 
     if(x < 11) {
-     Serial.print(","); 
+     Serial.print(",");
+     HC12.print(" ");
     }
   }
  
@@ -161,6 +141,7 @@ void loop() {
   // if you want to debug, this is a good time to do it!
   if ((c) && (GPSECHO))
     Serial.write(c);
+    HC12.write(c);
 
   // if a sentence is received, we can check the checksum, parse it...
   if (GPS.newNMEAreceived()) {
@@ -218,6 +199,55 @@ void loop() {
       //Serial.print("Satellites: ");
       Serial.print((int)GPS.satellites);
     }
+
+
+    //print to HC12
+    //Serial.print("\nTime: ");
+    if (GPS.hour < 10) { HC12.print('0'); }
+    HC12.print(GPS.hour, DEC); HC12.print(':');
+    if (GPS.minute < 10) { HC12.print('0'); }
+    HC12.print(GPS.minute, DEC); HC12.print(':');
+    if (GPS.seconds < 10) { HC12.print('0'); }
+    HC12.print(GPS.seconds, DEC); HC12.print('.');
+    if (GPS.milliseconds < 10) {
+      HC12.print("00");
+    } else if (GPS.milliseconds > 9 && GPS.milliseconds < 100) {
+      HC12.print("0");
+    }
+    HC12.print(GPS.milliseconds);
+    HC12.print(",");
+    //Serial.print("Date: ");
+    HC12.print(GPS.day, DEC); HC12.print('/');
+    HC12.print(GPS.month, DEC); HC12.print("/20");
+    HC12.print(GPS.year, DEC);
+    HC12.print(",");
+    //Serial.print("Fix: ");
+    HC12.print((int)GPS.fix);
+    //Serial.print(" quality: ");
+    HC12.print(",");
+    HC12.print((int)GPS.fixquality);
+    HC12.print(",");
+    if (GPS.fix) {
+      //Serial.print("Location: ");
+      HC12.print(GPS.latitude, 4);
+      HC12.print(GPS.lat);
+      HC12.print(", ");
+      HC12.print(GPS.longitude, 4);
+      HC12.print(GPS.lon);
+
+      //Serial.print("Speed (knots): ");
+      HC12.print(GPS.speed);
+      HC12.print(",");
+      //Serial.print("Angle: ");
+      HC12.print(GPS.angle);
+      HC12.print(",");
+      //Serial.print("Altitude: ");
+      HC12.print(GPS.altitude);
+      HC12.print(",");
+      //Serial.print("Satellites: ");
+      HC12.print((int)GPS.satellites);
+    }
   delay(timeToWait);
   Serial.println();
+  HC12.println();
 }
