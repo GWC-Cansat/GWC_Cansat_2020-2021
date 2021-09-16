@@ -15,6 +15,7 @@
 // Used for temp, gas, humidity and pressure.
 #include <Adafruit_BME680.h>
 
+// Setting the default sea level pressure duh
 #define SEALEVELPRESSURE_HPA 1013.25
 #define SAMPLE_RATE          50
 
@@ -75,6 +76,7 @@ void setup() {
 	if(!GPS.begin(9600)) {
 		DeviceStatus |= 0x02;
 	} else {
+		// sending commands to gps.
 		GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
 		GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
 		GPS.sendCommand(PGCMD_ANTENNA);
@@ -172,6 +174,8 @@ void loop() {
 		// Convert the time to unix timestamp
 		struct tm t;
 		unsigned long epoch;
+		
+		// Setting time for the gps.
 
 		t.tm_year = GPS.year + 100;
 		t.tm_mon = GPS.month - 1;
