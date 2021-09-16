@@ -1,12 +1,18 @@
 #include <Arduino_LPS22HB.h>
 #include <Arduino_HTS221.h>
 #include <Arduino_LSM9DS1.h>
+// Used for GPS
 #include <Adafruit_GPS.h>
 #include <Wire.h>
+// Used for sending things to serial
 #include <Serial.h>
+// Used for time related things.
 #include <time.h>
+// Used for accessing serial related devices. 
 #include <SPI.h>
+// Used for adafruit related sensors.
 #include <Adafruit_Sensor.h>
+// Used for temp, gas, humidity and pressure.
 #include <Adafruit_BME680.h>
 
 #define SEALEVELPRESSURE_HPA 1013.25
